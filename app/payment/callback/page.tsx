@@ -1,11 +1,10 @@
 "use client";
 
 import { useEffect, useRef, useState, Suspense } from "react";
-import { useSearchParams, useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 
 function CallbackInner() {
   const params = useSearchParams();
-  const router = useRouter();
   const [status, setStatus] = useState("Verifying payment…");
   const [error, setError] = useState("");
   const verified = useRef(false);
@@ -55,9 +54,12 @@ function CallbackInner() {
           "Payment successful! Your Premium plan is now active."
         );
 
+        // Force a fresh request so the dashboard sees
+        // the newly updated PREMIUM plan from the database.
         setTimeout(() => {
-          router.replace("/dashboard");
-        }, 1000);
+          window.location.href = "/dashboard";
+        }, 800);
+
       } catch (err) {
         console.error("Payment verification error:", err);
 
@@ -69,7 +71,7 @@ function CallbackInner() {
     };
 
     verifyPayment();
-  }, [params, router]);
+  }, [params]);
 
   return (
     <div className="card w-full max-w-md p-8 text-center">
